@@ -13,6 +13,8 @@ public class BattleSystem : MonoBehaviour
    [SerializeField] BattleDialogueBox dialogueBox;
 
    BattleState state;
+   int currentAction;
+   int currentMove;
 
    public void Start()
    {
@@ -26,6 +28,8 @@ public class BattleSystem : MonoBehaviour
         enemyUnit.Setup();
         enemyHUD.SetData(enemyUnit.Pokemon);
 
+        dialogueBox.SetMoveNames(playerUnit.Pokemon.Moves);
+
         yield return dialogueBox.TypeDialogue($"A wild {enemyUnit.Pokemon.Base.Name} appeared!");
         yield return new WaitForSeconds(1f);
 
@@ -38,5 +42,57 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(dialogueBox.TypeDialogue($"What will {playerUnit.Pokemon.Base.Name} do?"));
         dialogueBox.EnableActionSelector(true);
         
+    }
+
+    void PlayerMove()
+    {
+        state = BattleState.PlayerMove;
+        dialogueBox.EnableActionSelector(false);
+        dialogueBox.EnableDialogueText(false);
+        dialogueBox.EnableActionSelector(true);
+    }
+
+    private void Update()
+    {
+        if (state == BattleState.PlayerAction)
+        {
+            HandleActionSelection();
+        }
+        else if (state == BattleState.PlayerMove)
+        {
+            HandleMoveSelection();
+        }
+    }
+
+    void HandleActionSelection()
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            if (currentAction < 1)
+            ++currentAction;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            if (currentAction > 0)
+                --currentAction;
+        }
+
+        dialogueBox.UpdateActionSelection(currentAction);
+
+        if (currentAction > 0)
+        {
+            if (currentAction == 0)
+            {
+                PlayerMove();
+            }
+            else if (currentAction == 1)
+            {
+                //Run
+            }
+        }
+    }
+    void HandleMoveSelection()
+    {
+
     }
 }
