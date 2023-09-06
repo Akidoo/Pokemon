@@ -49,7 +49,13 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.PlayerMove;
         dialogueBox.EnableActionSelector(false);
         dialogueBox.EnableDialogueText(false);
-        dialogueBox.EnableActionSelector(true);
+        dialogueBox.EnableMoveSelector(true);
+    }
+
+    IEnumerator PerformPlayerMove()
+    {
+        var move = playerUnit.Pokemon.Moves[currentMove];
+        yield return dialogueBox.TypeDialogue($"{playerUnit.Pokemon.Base.Name} used {move.Base.Name}!");
     }
 
     private void Update()
@@ -79,7 +85,7 @@ public class BattleSystem : MonoBehaviour
 
         dialogueBox.UpdateActionSelection(currentAction);
 
-        if (currentAction > 0)
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             if (currentAction == 0)
             {
@@ -93,6 +99,37 @@ public class BattleSystem : MonoBehaviour
     }
     void HandleMoveSelection()
     {
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if (currentMove < playerUnit.Pokemon.Moves.Count - 1)
+            ++currentMove;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if (currentMove > 0)
+                --currentMove;
+        }
+         if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            if (currentMove < playerUnit.Pokemon.Moves.Count - 2)
+                currentMove += 2;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            if (currentMove > 0)
+                currentMove -= 2;
+        }
+
+        dialogueBox.UpdateMoveSelection(currentMove, playerUnit.Pokemon.Moves[currentMove]);
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            dialogueBox.EnableMoveSelector(false);
+            dialogueBox.EnableDialogueText(true);
+            StartCoroutine(PerformPlayerMove());
+
+        }
+
 
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class BattleDialogueBox : MonoBehaviour
 {
     [SerializeField] int lettersPerSecond;
-    [SerializeField] Colour highlightedColour;
+    [SerializeField] Color highlightedColour;
 
     [SerializeField] Text dialogueText;
     [SerializeField] GameObject actionSelector;
@@ -58,8 +58,22 @@ public class BattleDialogueBox : MonoBehaviour
             if (i == selectedAction)
              actionTexts[i].color = highlightedColour;
             else
-                actionTexts[i].color = Colour.black;
+                actionTexts[i].color = Color.black;
         }
+    }
+
+    public void UpdateMoveSelection(int selectedMove, Move move)
+    {
+        for (int i = 0; i<moveTexts.Count; i++)
+        {
+            if(i == selectedMove)
+                moveTexts[i].color = highlightedColour;
+            else
+                moveTexts[i].color = Color.black;
+        }
+        
+        ppText.text = $"PP {move.PP}/{move.Base.PP}";
+        typeText.text = move.Base.Type.ToString();
     }
 
     public void SetMoveNames(List<Move> moves)
